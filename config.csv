@@ -1,2 +1,7 @@
-SortBy,Country,A
 FilterBy,Sentiment,Negative
+SortBy,Authority,D
+SortBy,rank,A
+SortBy,LocalTime,D
+SortBy,Bio,D
+SortBy,Followers,D
+SortBy,Following,D

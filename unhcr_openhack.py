@@ -29,6 +29,8 @@ def print_dataset(dataset):
 
 def sort_dataset(dataset, col_names, ascending_vals):
   # sorting data frame by name
+  # col_names.append('rank')
+  # ascending_vals.append(True)
   dataset.sort_values(col_names, axis = 0, ascending = ascending_vals, 
                       inplace = True, na_position ='last')
   
@@ -53,16 +55,26 @@ def discard_tweet_bots(dataset):
   print(users_bot_prob)
   return dataset[~dataset['author id'].isin(users_bot_prob)]
 
-sentiment_types = {'NEGATIVE': 1, 'NEUTRAL': 2, 'POSITIVE': 3}
+def add_keyword_ranking(dataset):
+  global keywords_data
+  print(keywords_data)
+  for keyword in keywords_data.itertuples():
+    mask = (dataset['themes'].str.lower().str.contains(keyword[1].lower(), na=False))
+    dataset['rank'][mask] = keyword[0]
+
 users_bot_prob = {}
 config_file2 = pd.read_csv('config.csv', header=None)
+keywords_data = pd.read_csv('keywords.csv', header=None)
 data_file = pd.ExcelFile('sol_sample_uhrcn.xlsx')
 
 # Creating dataframe from Twitter data sheet
 twitter_dataset = data_file.parse(data_file.sheet_names[0])
 twitter_dataset.columns = twitter_dataset.columns.str.lower()
+twitter_dataset['rank'] = ''
 print('Initial shape:', twitter_dataset.shape)
 # print(twitter_dataset.columns)
+
+add_keyword_ranking(twitter_dataset)
 
 twitter_dataset = discard_tweet_bots(twitter_dataset)
 print('NO BOTS shape:', twitter_dataset.shape)
